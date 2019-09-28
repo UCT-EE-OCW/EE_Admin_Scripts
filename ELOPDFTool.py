@@ -91,25 +91,27 @@ def split_batch(input_dir, pages, output_dir):
     return
 
 
-def rename(input, output):
+def rename(in_file, new_name):
     """
     Renames a file
     :param input: Input file
     :param output: Name of output file
     :return:
     """
+    # Save the filename
+    os.rename(in_file, new_name)
     return
 
 
 def rename_batch(input_dir, title, list, output_dir):
     """
-
     :param input_dir: Directory of PDFs to rename
     ;param title: The primary title for each file, e.g. "EEE3096S_Prac1
     :param list: A list of student names in the format
     :param output_dir:
     :return:
     """
+
     return
 
 
