@@ -1,18 +1,43 @@
+"""
+Developed by Keegan Crankshaw to simplify ELO document renaming
+
+Special thanks to these Stackoverflow posts/users:
+
+rotate: https://stackoverflow.com/questions/46921452/python-batch-rotate-pdf-with-pypdf2
+split: https://stackoverflow.com/questions/490195/split-a-multi-page-pdf-file-into-multiple-pdf-files-with-python
+"""
+
 from PyPDF2 import PdfFileWriter, PdfFileReader
 import os
 
-# Define your options here
 
 
-def rotate(input, direction, degrees, output):
+def rotate(input,  degrees, output_dir):
     """
-
+    Rotates an input PDF <degrees> degrees clockwise and safes it to output_dir/<input>_rotated.pdf
     :param input: The file to rotate
-    :param direction: Clockwise or anticlockwise
     :param degrees: Amount of degrees to rotate
-    :param output: File to save to
+    :param output_dir: The output directory
     :return:
     """
+
+    # TODO: Ensure input exists
+
+    # ensure the output directory exists
+    if not os.path.exists(os.getcwd() + '/' + output_dir):
+        os.makedirs(os.getcwd() + '/' + output_dir)
+
+    pdf_in = open(os.getcwd() + '/' + input, 'rb')
+    pdf_reader = PdfFileReader(pdf_in)
+    pdf_writer = PdfFileWriter()
+    for pagenum in range(pdf_reader.numPages):
+        page = pdf_reader.getPage(pagenum)
+        page.rotateClockwise(degrees)
+        pdf_writer.addPage(page)
+    pdf_out = open(os.getcwd() + '/' + output_dir + '/' + input[:-4] + '_rotated.pdf', 'wb')
+    pdf_writer.write(pdf_out)
+    pdf_out.close()
+    pdf_in.close()
     return
 
 
@@ -37,10 +62,13 @@ def split(input_document, pages, output_dir):
     for i in range(int(inputpdf.numPages / pages)):
         output = PdfFileWriter()
         for j in range(pages):
-            print((i*pages)+j)
             output.addPage(inputpdf.getPage((i*pages)+j))
         with open(os.getcwd() + "/{}/document-page{}-{}.pdf".format(output_dir, (i*pages)+1, (i*pages)+pages), "wb") as outputStream:
             output.write(outputStream)
+    return
+
+
+def batch_split(input_dir, title, list, output_dir):
     return
 
 
