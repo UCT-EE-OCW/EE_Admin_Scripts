@@ -68,7 +68,7 @@ def split(in_file, pages, output_dir):
         for j in range(pages):
             output.addPage(inputpdf.getPage((i*pages)+j))
         file_string = os.getcwd() + '/' + output_dir + '/' + in_file[in_file.index('/') + 1:-4]
-        file_string += '_split {} to {}.pdf'.format((i*pages)+1, (i*pages)+pages)
+        file_string += '_split{:04d}to{:04d}.pdf'.format((i * pages) + 1, (i * pages) + pages)
         with open(file_string, 'wb') as outStream:
             output.write(outStream)
     print("Saved split pages to files named similarly to {}".format(file_string))
@@ -86,18 +86,18 @@ def split_batch(input_dir, pages, output_dir):
     count = len(glob.glob1(input_dir, "*.pdf"))
     print("Found {} pdf files in directory {}".format(count, input_dir))
 
-    for x in os.listdir(input_dir):
+    for x in sorted(glob.glob('{}/*.pdf'.format(input_dir))):
         if not x.endswith('.pdf'):
             continue
-        split(input_dir + '/' + x,  pages, output_dir)
+        split(x,  pages, output_dir)
     return
 
 
 def rename(in_file, new_name):
     """
     Renames a file
-    :param input: Input file
-    :param output: Name of output file
+    :param in_file: Input file
+    :param new_name: Name of output file
     :return:
     """
     # Save the filename
