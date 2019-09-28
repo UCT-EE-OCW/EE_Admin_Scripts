@@ -1,0 +1,10 @@
+venv/*
+.idea/*
+*.pyc
+bin/
+include/
+lib/
+share/
+static/
+*.pdf
+output/
