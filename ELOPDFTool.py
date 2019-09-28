@@ -1,25 +1,17 @@
-"""
-Developed by Keegan Crankshaw to simplify ELO document renaming
-
-Special thanks to these Stackoverflow posts/users:
-
-rotate: https://stackoverflow.com/questions/46921452/python-batch-rotate-pdf-with-pypdf2
-split: https://stackoverflow.com/questions/490195/split-a-multi-page-pdf-file-into-multiple-pdf-files-with-python
-"""
-
 from PyPDF2 import PdfFileWriter, PdfFileReader
 import os
+import glob
 
 
-
-def rotate(input,  degrees, output_dir):
+def rotate(in_file,  degrees, output_dir):
     """
     Rotates an input PDF <degrees> degrees clockwise and safes it to output_dir/<input>_rotated.pdf
-    :param input: The file to rotate
+    :param in_file: The file to rotate
     :param degrees: Amount of degrees to rotate
     :param output_dir: The output directory
     :return:
     """
+    print("Rotating {}".format(in_file))
 
     # TODO: Ensure input exists
 
@@ -27,23 +19,32 @@ def rotate(input,  degrees, output_dir):
     if not os.path.exists(os.getcwd() + '/' + output_dir):
         os.makedirs(os.getcwd() + '/' + output_dir)
 
-    pdf_in = open(os.getcwd() + '/' + input, 'rb')
+    pdf_in = open(os.getcwd() + '/' + in_file, 'rb')
     pdf_reader = PdfFileReader(pdf_in)
     pdf_writer = PdfFileWriter()
     for pagenum in range(pdf_reader.numPages):
         page = pdf_reader.getPage(pagenum)
         page.rotateClockwise(degrees)
         pdf_writer.addPage(page)
-    pdf_out = open(os.getcwd() + '/' + output_dir + '/' + input[:-4] + '_rotated.pdf', 'wb')
+    pdf_out = open(os.getcwd() + '/' + output_dir + '/' + in_file[in_file.index('/')+1:-4] + '_rotated.pdf', 'wb')
+    print("Saved {} as {}".format(in_file, os.getcwd() + '/' + output_dir + '/' + in_file[:-4] + '_rotated.pdf'))
     pdf_writer.write(pdf_out)
     pdf_out.close()
     pdf_in.close()
     return
 
 
+def rotate_batch(input_dir, degrees, output_dir):
+    count = len(glob.glob1(input_dir, "*.pdf"))
+    print("Found {} pdf files in directory {}".format(count, input_dir))
+    for x in os.listdir(input_dir):
+        if not x.endswith('.pdf'):
+            continue
+        rotate(input_dir + x,  degrees, output_dir)
+
+
 def split(input_document, pages, output_dir):
     """
-
     :param input_document: The input file
     :param pages: The amount of pages per output document
     :param output_dir:
@@ -68,7 +69,18 @@ def split(input_document, pages, output_dir):
     return
 
 
-def batch_split(input_dir, title, list, output_dir):
+def split_batch(input_dir, pages, output_dir):
+    """
+    Performs the same function as split, but on a directory.
+    :param input_dir: Input Directory with PDFs
+    :param pages:
+    :param output_dir:
+    :return:
+    """
+    for x in os.listdir(input_dir):
+        if not x.endswith('.pdf'):
+            continue
+        split(input_dir + '/' + x,  pages, output_dir)
     return
 
 
@@ -82,7 +94,7 @@ def rename(input, output):
     return
 
 
-def batch_rename(input_dir, title, list, output_dir):
+def rename_batch(input_dir, title, list, output_dir):
     """
 
     :param input_dir: Directory of PDFs to rename
