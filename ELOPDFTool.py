@@ -1,6 +1,8 @@
 from PyPDF2 import PdfFileWriter, PdfFileReader
 import os
 import glob
+import csv
+from shutil import copyfile
 
 
 def rotate(in_file,  degrees, output_dir):
@@ -99,18 +101,46 @@ def rename(in_file, new_name):
     :return:
     """
     # Save the filename
-    os.rename(in_file, new_name)
+    copyfile(in_file, new_name)
     return
 
 
-def rename_batch(input_dir, title, list, output_dir):
+def rename_batch(input_dir, title, csv_file, output_dir):
     """
     :param input_dir: Directory of PDFs to rename
-    ;param title: The primary title for each file, e.g. "EEE3096S_Prac1
-    :param list: A list of student names in the format
+    :param title: The primary title for each file, e.g. "EEE3096S_Prac1
+    :param csv_file: A list of student names in the csv format
     :param output_dir:
     :return:
     """
+    if not os.path.exists(os.getcwd() + '/' + output_dir):
+        os.makedirs(os.getcwd() + '/' + output_dir)
+
+    count = len(glob.glob1(input_dir, "*.pdf"))
+    print("Found {} pdf files in directory {}".format(count, input_dir))
+
+    names = []
+
+    # Load in the CSV
+    file = open(csv_file, "r")
+    reader = csv.reader(file)
+    for line in reader:
+        names.append(line[0])
+
+    # print(names)
+
+    if not count == len(names):
+        print("Different number of rows and PDFs")
+        return
+
+    # Rename the files
+    print(sorted(glob.glob('{}/*.pdf'.format(input_dir))))
+    for index, in_pdf in enumerate(sorted(glob.glob('{}/*.pdf'.format(input_dir)))):
+        if not in_pdf.endswith('.pdf'):
+            continue
+        print(in_pdf)
+        print(output_dir + title + str(names[index]) + '.pdf')
+        rename(in_pdf, output_dir + '/' + title + str(names[index]) + '.pdf')
 
     return
 
