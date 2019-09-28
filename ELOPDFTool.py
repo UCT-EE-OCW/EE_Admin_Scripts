@@ -43,15 +43,16 @@ def rotate_batch(input_dir, degrees, output_dir):
         rotate(input_dir + x,  degrees, output_dir)
 
 
-def split(input_document, pages, output_dir):
+def split(in_file, pages, output_dir):
     """
-    :param input_document: The input file
+    :param in_file: The input file
     :param pages: The amount of pages per output document
     :param output_dir:
     :return:
     """
+    print("Splitting {} in to {} page segments".format(in_file, pages))
     # TODO: Add a check if the file exists
-    inputpdf = PdfFileReader(open(input_document, "rb"))
+    inputpdf = PdfFileReader(open(in_file, "rb"))
 
     # TODO: Add a check to see if the number of pages works out
 
@@ -64,8 +65,11 @@ def split(input_document, pages, output_dir):
         output = PdfFileWriter()
         for j in range(pages):
             output.addPage(inputpdf.getPage((i*pages)+j))
-        with open(os.getcwd() + "/{}/document-page{}-{}.pdf".format(output_dir, (i*pages)+1, (i*pages)+pages), "wb") as outputStream:
-            output.write(outputStream)
+        file_string = os.getcwd() + '/' + output_dir + '/' + in_file[in_file.index('/') + 1:-4]
+        file_string += '_split {} to {}.pdf'.format((i*pages)+1, (i*pages)+pages)
+        with open(file_string, 'wb') as outStream:
+            output.write(outStream)
+    print("Saved split pages to files named similarly to {}".format(file_string))
     return
 
 
@@ -77,6 +81,9 @@ def split_batch(input_dir, pages, output_dir):
     :param output_dir:
     :return:
     """
+    count = len(glob.glob1(input_dir, "*.pdf"))
+    print("Found {} pdf files in directory {}".format(count, input_dir))
+
     for x in os.listdir(input_dir):
         if not x.endswith('.pdf'):
             continue
