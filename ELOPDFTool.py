@@ -2,7 +2,7 @@ from PyPDF2 import PdfFileWriter, PdfFileReader
 import os
 import glob
 import csv
-from shutil import copyfile
+from shutil import copyfile, rmtree
 
 
 def rotate(in_file,  degrees, output_dir):
@@ -20,6 +20,7 @@ def rotate(in_file,  degrees, output_dir):
     # ensure the output directory exists
     if not os.path.exists(os.getcwd() + '/' + output_dir):
         os.makedirs(os.getcwd() + '/' + output_dir)
+        print("made dir {}".format(os.getcwd() + '/' + output_dir))
 
     pdf_in = open(os.getcwd() + '/' + in_file, 'rb')
     pdf_reader = PdfFileReader(pdf_in)
@@ -145,4 +146,26 @@ def rename_batch(input_dir, title, csv_file, output_dir):
     return
 
 
+def process(in_dir, degrees, num_pages, title, csv_file):
+    """
+    Apply all 3 operations to PDFs in an input directory
+    :param in_dir:
+    :param title:
+    :param csv_file:
+    :param num_pages:
+    :param degrees:
+    :return:
+    """
 
+    # Rotate
+    rotate_batch(in_dir, degrees, in_dir[:-1] + '_rot')
+
+    # Split
+    split_batch(in_dir[:-1] + '_rot/', num_pages, in_dir[:-1] + '_rot_splt')
+
+    # Rename
+    rename_batch(in_dir[:-1] + '_rot_splt/', title, csv_file, in_dir[:-1] + '_processed')
+
+    # Remove temporaries
+    rmtree(in_dir[:-1] + '_rot')
+    rmtree(in_dir[:-1] + '_rot_splt')
