@@ -10,3 +10,4 @@ Ideally, CLI should be developed to organise this. So if anyone wants to do that
 #### Thanks to these Stackoverflow posts/users:
 - [Rotating a PDF](https://stackoverflow.com/questions/46921452/python-batch-rotate-pdf-with-pypdf2)
 - [Split a PDF](https://stackoverflow.com/questions/490195/split-a-multi-page-pdf-file-into-multiple-pdf-files-with-python)
+- [Reverse a PDF](https://stackoverflow.com/questions/5425439/how-do-i-reverse-the-order-of-the-pages-in-a-pdf-file-using-pypdf)

@@ -5,6 +5,27 @@ import csv
 from shutil import copyfile, rmtree
 
 
+def reverse(in_file, out_file):
+    """
+    Reverse the order of <in_file> and saves it as <out_file>
+    :param in_file: The PDF file to reverse
+    :param out_file: Where to save the reversed pdf
+    :return:
+    """
+    pdf_in = open(os.getcwd() + '/' + in_file, 'rb')
+    pdf_reader = PdfFileReader(pdf_in)
+    pdf_writer = PdfFileWriter()
+    for page in range(pdf_reader.numPages-1, -1, -1):
+        pdf_writer.addPage(pdf_reader.getPage(page))
+
+    pdf_out = open(os.getcwd() + '/' + in_file[:-4] + '_reversed.pdf', 'wb')
+    print("Saved {} as {}".format(in_file, os.getcwd() + '/' + in_file[:-4] + '_reversed.pdf'))
+    pdf_writer.write(pdf_out)
+    pdf_out.close()
+    pdf_in.close()
+    return
+
+
 def rotate(in_file,  degrees, output_dir):
     """
     Rotates an input PDF <degrees> degrees clockwise and safes it to output_dir/<input>_rotated.pdf
