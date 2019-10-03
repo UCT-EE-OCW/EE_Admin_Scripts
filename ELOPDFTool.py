@@ -5,24 +5,67 @@ import csv
 from shutil import copyfile, rmtree
 
 
-def reverse(in_file, out_file):
+def check_dir(directory):
+    """
+    Checks if a directory exists, creates it otherwise
+    :param directory:
+    :return:
+    """
+    print("Checking if exists: {}".format(os.getcwd() + '/' + directory))
+    if not os.path.exists(os.getcwd() + '/' + directory):
+        os.makedirs(os.getcwd() + '/' + directory)
+        print("made dir {}".format(os.getcwd() + '/' + directory))
+
+
+def open_pdf(in_file):
+    """
+    Ideally caters for all possible directory naming, mostly handling "/"
+    :param in_file:
+    :return:
+    """
+
+    return
+
+
+def reverse(in_file, out_dir):
     """
     Reverse the order of <in_file> and saves it as <out_file>
     :param in_file: The PDF file to reverse
-    :param out_file: Where to save the reversed pdf
+    :param out_dir: Where to save the reversed pdf
     :return:
     """
+    check_dir(out_dir)
+
     pdf_in = open(os.getcwd() + '/' + in_file, 'rb')
     pdf_reader = PdfFileReader(pdf_in)
     pdf_writer = PdfFileWriter()
     for page in range(pdf_reader.numPages-1, -1, -1):
         pdf_writer.addPage(pdf_reader.getPage(page))
 
-    pdf_out = open(os.getcwd() + '/' + in_file[:-4] + '_reversed.pdf', 'wb')
-    print("Saved {} as {}".format(in_file, os.getcwd() + '/' + in_file[:-4] + '_reversed.pdf'))
+    pdf_out = open(os.getcwd() + '/' + out_dir + '/' + in_file[in_file.index('/') + 1:-4] + '_rev.pdf', 'wb')
+    print("Saved {} as {}".format(in_file,os.getcwd() + '/' + out_dir + '/' + in_file[in_file.index('/') + 1:-4] + '_rev.pdf'))
     pdf_writer.write(pdf_out)
     pdf_out.close()
     pdf_in.close()
+    return
+
+
+def reverse_batch(in_dir, out_dir):
+    """
+
+    """
+    # ensure the output directory exists
+    check_dir(out_dir)
+
+    #
+    count = len(glob.glob1(in_dir, "*.pdf"))
+    print("Found {} pdf files in directory {}".format(count, in_dir))
+
+    for x in sorted(glob.glob('{}/*.pdf'.format(in_dir))):
+        if not x.endswith('.pdf'):
+            continue
+        reverse(x, out_dir)
+
     return
 
 
@@ -39,10 +82,9 @@ def rotate(in_file,  degrees, output_dir):
     # TODO: Ensure input exists
 
     # ensure the output directory exists
-    if not os.path.exists(os.getcwd() + '/' + output_dir):
-        os.makedirs(os.getcwd() + '/' + output_dir)
-        print("made dir {}".format(os.getcwd() + '/' + output_dir))
+    check_dir(output_dir)
 
+    print(in_file)
     pdf_in = open(os.getcwd() + '/' + in_file, 'rb')
     pdf_reader = PdfFileReader(pdf_in)
     pdf_writer = PdfFileWriter()
@@ -50,7 +92,7 @@ def rotate(in_file,  degrees, output_dir):
         page = pdf_reader.getPage(pagenum)
         page.rotateClockwise(degrees)
         pdf_writer.addPage(page)
-    pdf_out = open(os.getcwd() + '/' + output_dir + '/' + in_file[in_file.index('/')+1:-4] + '_rotated.pdf', 'wb')
+    pdf_out = open(os.getcwd() + '/' + output_dir + in_file[in_file.index('/')+1:-4] + '_rotated.pdf', 'wb')
     print("Saved {} as {}".format(in_file, os.getcwd() + '/' + output_dir + '/' + in_file[:-4] + '_rotated.pdf'))
     pdf_writer.write(pdf_out)
     pdf_out.close()
@@ -64,7 +106,7 @@ def rotate_batch(input_dir, degrees, output_dir):
     for x in os.listdir(input_dir):
         if not x.endswith('.pdf'):
             continue
-        rotate(input_dir + x,  degrees, output_dir)
+        rotate(input_dir + '/' + x,  degrees, output_dir)
 
 
 def split(in_file, pages, output_dir):
@@ -81,8 +123,7 @@ def split(in_file, pages, output_dir):
     # TODO: Add a check to see if the number of pages works out
 
     # ensure the output directory exists
-    if not os.path.exists(os.getcwd() + '/' + output_dir):
-        os.makedirs(os.getcwd() + '/' + output_dir)
+    check_dir(output_dir)
 
     # Split the PDF
     for i in range(int(inputpdf.numPages / pages)):
@@ -135,8 +176,7 @@ def rename_batch(input_dir, title, csv_file, output_dir):
     :param output_dir:
     :return:
     """
-    if not os.path.exists(os.getcwd() + '/' + output_dir):
-        os.makedirs(os.getcwd() + '/' + output_dir)
+    check_dir(output_dir)
 
     count = len(glob.glob1(input_dir, "*.pdf"))
     print("Found {} pdf files in directory {}".format(count, input_dir))
@@ -167,16 +207,21 @@ def rename_batch(input_dir, title, csv_file, output_dir):
     return
 
 
-def process(in_dir, degrees, num_pages, title, csv_file):
+def process(in_dir, reverse_pdf, degrees, num_pages, title, csv_file):
     """
-    Apply all 3 operations to PDFs in an input directory
+    Apply all 4 operations to PDFs in an input directory
     :param in_dir:
+    :param reverse: True or false
     :param title:
     :param csv_file:
     :param num_pages:
     :param degrees:
     :return:
     """
+
+    if reverse_pdf.upper() == "TRUE":
+        reverse_batch(in_dir, in_dir[:-1] + '_rev')
+        in_dir = in_dir[:-1] + '_rev/'
 
     # Rotate
     rotate_batch(in_dir, degrees, in_dir[:-1] + '_rot')
@@ -188,5 +233,5 @@ def process(in_dir, degrees, num_pages, title, csv_file):
     rename_batch(in_dir[:-1] + '_rot_splt/', title, csv_file, in_dir[:-1] + '_processed')
 
     # Remove temporaries
-    rmtree(in_dir[:-1] + '_rot')
-    rmtree(in_dir[:-1] + '_rot_splt')
+    # rmtree(in_dir[:-1] + '_rot')
+    # rmtree(in_dir[:-1] + '_rot_splt')
