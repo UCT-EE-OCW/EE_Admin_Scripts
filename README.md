@@ -11,5 +11,5 @@ Ideally, CLI should be developed to organise this. So if anyone wants to do that
 - [Split a PDF](https://stackoverflow.com/questions/490195/split-a-multi-page-pdf-file-into-multiple-pdf-files-with-python)
 - [Reverse a PDF](https://stackoverflow.com/questions/5425439/how-do-i-reverse-the-order-of-the-pages-in-a-pdf-file-using-pypdf)
 
-# PDFEditor
+# PDFFormEditor
 Populates a PDF Form based on the data provided in a .csv file.

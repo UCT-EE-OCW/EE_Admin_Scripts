@@ -18,7 +18,14 @@ def get_fields(file_in):
 
 
 def populate_form(pdf_in, csv_in):
+    # load in the CSV
     reader = csv.DictReader(open(csv_in))
+
+    students = []
     for row in reader:
+        students.append(row)
         print(row)
+
+    print(students[1])
+
 
