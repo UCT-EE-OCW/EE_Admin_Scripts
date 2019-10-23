@@ -6,18 +6,11 @@ The program will check all submissions and rename them
 The student will be marked if they have a submission
 """
 
-import csv # handles CSV operations
-import os # handles directory access and renaming
-import re # regex for finding student numbers
+import csv  # handles CSV operations
+import os   # handles directory access and renaming
+import re   # regex for finding student numbers
 
-# load in the CSV
-
-# check submissions in the primary directory
-
-# for each submission dir, rename (whether file or folder) the submission text
-
-
-def replace(studnum, lookup_dict):
+def mark_submitted(activity, studentnumber):
     pass
 
 
@@ -50,32 +43,36 @@ def process(root_dir):
     for s in students:
         stud_nums[s["Student ID"].upper()] = s["Student Name"]
 
-    # print(stud_nums)
-
-    print("_____________________________________________________")
+    fieldnames = [] + reader.fieldnames
 
     # open a subdirectory
     for entry in entries:
-        print("Working with submission {}".format(entry))
         if os.path.isdir(root_dir + '/' + entry):
             print("Now working with {}".format(entry))
+            fieldnames.append(entry)
             for item in os.listdir(root_dir + '/' + entry):
-                #new_name = regex.sub(replace(stud_num, ), item)
                 s_new = item
                 # Build a regex string to find all occurences of a subtstring
                 studnums_found = re.findall(pattern=re.compile(r"[a-zA-Z]{6}[0-9]{3}"), string=item)
                 for i in studnums_found:
-                    # try:
+                    # manage the renaming
                     s_new = s_new.replace(i, stud_nums[i.upper()])
-                    # except:
-                    #     print("STUDNUM {} NOT FOUND".format(i))
+                    # State that the student has submitted
+                    print("I'm here wtf")
+                    for s in students:
+                        print(s)
+                        if s["Student ID"].upper() == i.upper():
+                            s[entry] = '1'
+                            print(s)
 
                 os.rename(root_dir + '/' + entry + '/' + item, root_dir + '/' + entry + '/' + s_new)
 
     # write out the file
     csv_out = open(csv_name[:-4] + "_processed.csv", 'w')
-    fieldnames = ['first_name', 'last_name']
     writer = csv.DictWriter(csv_out, fieldnames=fieldnames)
+    writer.writeheader()
+    for s in students:
+        writer.writerow(s)
 
     # Finally, close the file
     csv_out.close()
