@@ -6,9 +6,9 @@ The program will check all submissions and rename them
 The student will be marked if they have a submission
 """
 
-import csv
-import os
-import glob
+import csv # handles CSV operations
+import os # handles directory access and renaming
+import re # regex for finding student numbers
 
 # load in the CSV
 
@@ -17,7 +17,12 @@ import glob
 # for each submission dir, rename (whether file or folder) the submission text
 
 
+def replace(studnum, lookup_dict):
+    pass
+
+
 def process(root_dir):
+
     # Get practicals
     entries = os.listdir(root_dir)
     print("Found {} folders in directory {}".format(len(entries), root_dir))
@@ -40,19 +45,29 @@ def process(root_dir):
     for s in reader:
         students.append(s)
 
-    # cosntruct a list of only student numebers
-    stud_nums = []
+    # construct a dict of only student {numbers : student name}
+    stud_nums = {}
     for s in students:
-       stud_nums.append(s["Student ID"])
+        stud_nums[s["Student ID"].upper()] = s["Student Name"]
 
+    # print(stud_nums)
+
+    print("_____________________________________________________")
 
     # open a subdirectory
     for entry in entries:
         if os.path.isdir(root_dir + '/' + entry):
             print("Now working with {}".format(entry))
             for item in os.listdir(root_dir + '/' + entry):
+                #new_name = regex.sub(replace(stud_num, ), item)
+
                 # Build a regex string to find all occurences of a subtstring
-                pass
+                studnums_found = re.findall(pattern=re.compile(r"[a-zA-Z]{6}[0-9]{3}"), string=item)
+                for i in studnums_found:
+                    try:
+                        print(stud_nums[i.upper()])
+                    except:
+                        print("STUDNUM {} NOT FOUND".format(i))
                 #print("renaming {}".format(item))
 
     # rename a file
