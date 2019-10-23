@@ -56,24 +56,21 @@ def process(root_dir):
 
     # open a subdirectory
     for entry in entries:
+        print("Working with submission {}".format(entry))
         if os.path.isdir(root_dir + '/' + entry):
             print("Now working with {}".format(entry))
             for item in os.listdir(root_dir + '/' + entry):
                 #new_name = regex.sub(replace(stud_num, ), item)
-
+                s_new = item
                 # Build a regex string to find all occurences of a subtstring
                 studnums_found = re.findall(pattern=re.compile(r"[a-zA-Z]{6}[0-9]{3}"), string=item)
                 for i in studnums_found:
-                    try:
-                        print(stud_nums[i.upper()])
-                    except:
-                        print("STUDNUM {} NOT FOUND".format(i))
-                #print("renaming {}".format(item))
+                    # try:
+                    s_new = s_new.replace(i, stud_nums[i.upper()])
+                    # except:
+                    #     print("STUDNUM {} NOT FOUND".format(i))
 
-    # rename a file
-    # os.rename(r'file path\OLD file name.file type', r'file path\NEW file name.file type')
-
-    # update the dictionary
+                os.rename(root_dir + '/' + entry + '/' + item, root_dir + '/' + entry + '/' + s_new)
 
     # write out the file
     csv_out = open(csv_name[:-4] + "_processed.csv", 'w')
