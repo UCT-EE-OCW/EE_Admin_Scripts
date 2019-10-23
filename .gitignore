@@ -8,4 +8,5 @@ share/
 static/
 *.pdf
 output/
-*.csv
+*.csv*
+Working Documents/*
