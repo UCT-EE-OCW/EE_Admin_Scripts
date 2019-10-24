@@ -22,7 +22,7 @@ Populates a PDF Form based on the data provided in a .csv file. Good for generat
 ## check_rename
 Contains two methods:
 - rename_submissions
-- process submissions
+- process_submissions
 
 The following assumptions are made: 
 - A root folder containing a csv with names (column called "Student Name") and student numbers (column called "Student ID") is provided. 

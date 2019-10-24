@@ -10,7 +10,7 @@ import csv  # handles CSV operations
 import os   # handles directory access and renaming
 import re   # regex for finding student numbers
 
-def mark_submitted(activity, studentnumber):
+def process_submissions(activity, studentnumber):
     pass
 
 
@@ -29,12 +29,10 @@ def rename_submissions(root_dir):
     for entry in entries:
         if os.path.isdir(root_dir + '/' + entry):
             print(" - {}".format(entry))
-
-    # Load the CSV
-    for entry in entries:
         if entry[-4:] == ".csv":
             csv_name = root_dir + '/' + entry
             break
+
     print("Found {} as the source names file".format(csv_name))
 
     csv_in = open(csv_name)
@@ -48,7 +46,6 @@ def rename_submissions(root_dir):
     stud_nums = {}
     for s in students:
         stud_nums[s["Student ID"].upper()] = s["Student Name"]
-
 
     # open a subdirectory
     for entry in entries:
