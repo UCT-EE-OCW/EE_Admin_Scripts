@@ -62,7 +62,6 @@ def rename_submissions(root_dir):
 
                 # Dictionaries can't have duplicate keys so it auto-magically removes duplicates
                 studnums_found = list(dict.fromkeys(studnums_found))
-                print(studnums_found)
                 s_new = "{}_{}".format(root_dir, entry)
                 fileformat = item[-4:]
                 for i in studnums_found:
