@@ -14,8 +14,70 @@ def mark_submitted(activity, studentnumber):
     pass
 
 
-def process(root_dir):
+def rename_submissions(root_dir):
+    """
+    Renames submissions according to <rootdir>_<subdir>_<STUD_NUM>_<Surname, name>.filetype
+    For example, if you process a folder caleld "EEE3096S" and it contains a sub folder called "Prac 1", outputs will be
+    'EEE3096S_Prac 1_STDNUM001_Number, Student.pdf
+    :param root_dir:
+    :return:
+    """
+    # Get practicals
+    entries = os.listdir(root_dir)
+    print("Found {} folders in directory {}".format(len(entries), root_dir))
+    print("The following tasks will be processed:")
+    for entry in entries:
+        if os.path.isdir(root_dir + '/' + entry):
+            print(" - {}".format(entry))
 
+    # Load the CSV
+    for entry in entries:
+        if entry[-4:] == ".csv":
+            csv_name = root_dir + '/' + entry
+            break
+    print("Found {} as the source names file".format(csv_name))
+
+    csv_in = open(csv_name)
+    reader = csv.DictReader(csv_in)
+
+    students = []
+    for s in reader:
+        students.append(s)
+
+    # construct a dict of only student {numbers : student name}
+    stud_nums = {}
+    for s in students:
+        stud_nums[s["Student ID"].upper()] = s["Student Name"]
+
+
+    # open a subdirectory
+    for entry in entries:
+        if os.path.isdir(root_dir + '/' + entry):
+            print("Now working with {}".format(entry))
+            for item in os.listdir(root_dir + '/' + entry):
+                # Build a regex string to find all occurences of a subtstring
+                studnums_found = re.findall(pattern=re.compile(r"[a-zA-Z]{6}[0-9]{3}"), string=item)
+                studnums_found = [x.upper() for x in studnums_found]  # uppercase everything now
+                studnums_found = sorted(studnums_found)
+
+                # Dictionaries can't have duplicate keys so it auto-magically removes duplicates
+                studnums_found = list(dict.fromkeys(studnums_found))
+                print(studnums_found)
+                s_new = "{}_{}".format(root_dir, entry)
+                fileformat = item[-4:]
+                for i in studnums_found:
+                    s_new += "_{}_{}".format(i, stud_nums[i])
+                s_new += fileformat
+
+                os.rename(root_dir + '/' + entry + '/' + item, root_dir + '/' + entry + '/' + s_new)
+
+    # Finally, close the file
+    csv_in.close()
+
+    return
+
+
+def process(root_dir):
     # Get practicals
     entries = os.listdir(root_dir)
     print("Found {} folders in directory {}".format(len(entries), root_dir))
@@ -82,4 +144,4 @@ def process(root_dir):
 
 
 if __name__ == "__main__":
-    process("RenamingTest")
+    rename_submissions("EEE3095S_EEE3096S")
