@@ -22,8 +22,9 @@ def process_submissions(root_dir):
     # Load the CSV
     for entry in entries:
         if entry[-4:] == ".csv":
-            csv_name = root_dir + '/' + entry
-            break
+            if not "processed" in entry:
+                csv_name = root_dir + '/' + entry
+                break
     print("Found {} as the source names file".format(csv_name))
 
     csv_in = open(csv_name)
