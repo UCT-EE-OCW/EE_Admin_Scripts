@@ -59,10 +59,14 @@ def rename_submissions(root_dir):
 
                 # Dictionaries can't have duplicate keys so it auto-magically removes duplicates
                 studnums_found = list(dict.fromkeys(studnums_found))
-                s_new = "{}_{}".format(root_dir, entry)
+                s_new = "{} {}".format(root_dir, entry)
                 fileformat = item[-4:]
                 for i in studnums_found:
-                    s_new += "_{}_{}".format(i, stud_nums[i])
+                    try:
+                        s_new += " {} {}".format(i, stud_nums[i])
+                    except:
+                        s_new += " [{}]]".format(i)
+                        print("Could not find student number {}".format(i))
                 s_new += fileformat
 
                 os.rename(root_dir + '/' + entry + '/' + item, root_dir + '/' + entry + '/' + s_new)
@@ -140,4 +144,4 @@ def process(root_dir):
 
 
 if __name__ == "__main__":
-    rename_submissions("EEE3095S_EEE3096S")
+    rename_submissions("EEE3095S EEE3096S")
