@@ -1,23 +1,24 @@
 
 # ELO Tools
-This is essentially a collection of tools I developed to make ECSA admin requirements less tedious.
+This is essentially a collection of tools I developed to make admin requirements less tedious.
 These tools aren't as well written as they could be, and could likely be improved.  
-I'll put more effort in to it if more people require these tools, but I'm not really committed to any possible updates/feature additions.
+I'll put more effort in to it if more people require these tools, but I'm not committed to any possible updates/feature additions.
 
 
 ## ELOPDFTool  
-Options for rotate, split, reverse and rename.
+This was designed to make scanning and processing of forms and tests easier.
 
-A lot more work can be done on this (obviously) as it's very janky at the moment.  
+Options for rotate, split, reverse and rename.
+  
 Ideally, CLI should be developed to organise this. So if anyone wants to do that and make a PR, please feel free.
 
-Thanks to these StackOverflow posts/users:
-- [Rotating a PDF](https://stackoverflow.com/questions/46921452/python-batch-rotate-pdf-with-pypdf2)
-- [Split a PDF](https://stackoverflow.com/questions/490195/split-a-multi-page-pdf-file-into-multiple-pdf-files-with-python)
-- [Reverse a PDF](https://stackoverflow.com/questions/5425439/how-do-i-reverse-the-order-of-the-pages-in-a-pdf-file-using-pypdf)
-
 ## PDFFormEditor
-Populates a PDF Form based on the data provided in a .csv file. Good for generating ECSA forms for each student
+Populates a PDF Form based on the data provided in a .csv file.
+Good for generating ECSA forms for each student.  
+
+Expects an included .csv with a column for each field in an editable PDF.
+A good way to generate these forms is in Latex using the hyperref package. 
+If there's an interest in how to go about generating these Latex forms, I can upload a code sample. 
 
 ## check_rename
 Contains two methods:
@@ -37,7 +38,7 @@ The following assumptions are made:
 
 #### Renaming submissions
 Submissions are renamed according to
-```<rootdir>_<subdir>_<STUD_NUM>_<Surname, name>.filetype```
+```<rootdir> <subdir> <STUD_NUM> <Surname, name>.filetype```
 
 Take the following file structure:
 ```
@@ -54,12 +55,14 @@ The program uses names.csv to rename the submissions to the following:
 EEE3095S_EEE3096S/
 ├── names.csv
 ├── Practical 2 - Benchmarking
-│   ├── EEE3095S_EEE3096S_Practical 2 - Benchmarking_STDNUM001_Number, Student.pdf
-│   ├── EEE3095S_EEE3096S_Practical 2 - Benchmarking_STDEXA001_Student, Example_STDDMM001_Student, Dummy.pdf
+│   ├── EEE3095S EEE3096S Practical 2 - Benchmarking STDNUM001 Number, Student.pdf
+│   ├── EEE3095S EEE3096S Practical 2 - Benchmarking STDEXA001 Student, Example STDDMM001 Student, Dummy.pdf
 └── IrrelevantFile.filetype
 ```
-The program uses student numbers that are alphabetised as unique identifiers, hence their inclusion
+The program uses student numbers that are alphabetised as unique identifiers, hence their inclusion.
 
 #### Processing Submissions
 This can be performed on renamed or not submissions.
-The application uses the names.csv file and goes through each folder. It creates an output csv called ```names_processed.csv``` which contains an column for each folder in the root directory. If a student number is found to be submitted, it will mark it as found. 
+The application uses the names.csv file and goes through each folder. 
+It creates an output csv called ```names_processed.csv``` which contains an column for each folder in the root directory. 
+If a student number is found to be submitted, the program will mark that column with a "Y". 

@@ -1,4 +1,4 @@
-from PyPDF2 import PdfFileWriter, PdfFileReader
+from PyPDF2 import PdfFileReader
 from fdfgen import forge_fdf
 from subprocess import Popen, PIPE
 import csv
@@ -32,7 +32,7 @@ def populate_form(pdf_in, csv_in):
         print(fields)
         fdf = forge_fdf("", fields, [], [], [])
         pdftk = ["pdftk", pdf_in, "fill_form", "-",
-                 "output", student["student-name"] +"out.pdf", "flatten"]
+                 "output", "EEE3096S_ELOAssessment_{}.pdf".format(student["student-name"]), "flatten"]
         proc = Popen(pdftk, stdin=PIPE)
         output = proc.communicate(input=fdf)
         if output[1]:
