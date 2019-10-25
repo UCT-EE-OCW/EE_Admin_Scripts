@@ -139,4 +139,5 @@ def rename_submissions(root_dir):
 
 
 if __name__ == "__main__":
+    rename_submissions("EEE3095S EEE3096S")
     process_submissions("EEE3095S EEE3096S")

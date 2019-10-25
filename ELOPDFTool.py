@@ -107,6 +107,7 @@ def rotate_batch(input_dir, degrees, output_dir):
         if not x.endswith('.pdf'):
             continue
         rotate(input_dir + '/' + x,  degrees, output_dir)
+    print("Finished Rotating")
 
 
 def split(in_file, pages, output_dir):
