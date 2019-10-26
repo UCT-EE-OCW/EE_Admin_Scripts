@@ -126,7 +126,7 @@ def rename_submissions(root_dir):
                     try:
                         s_new += " {} {}".format(i, stud_nums[i])
                     except:
-                        s_new += " [{}]]".format(i)
+                        s_new += " [{}]".format(i)
                         print("Could not find student number {}".format(i))
                 s_new += fileformat
 
