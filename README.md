@@ -4,6 +4,7 @@ This is essentially a collection of tools I developed to make admin requirements
 These tools aren't as well written as they could be, and could likely be improved.  
 I'll put more effort in to it if more people require these tools, but I'm not committed to any possible updates/feature additions.
 
+This code is published under the GNU Affero General Public License v3.0
 
 ## ELOPDFTool  
 This was designed to make scanning and processing of forms and tests easier.
