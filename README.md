@@ -1,7 +1,7 @@
 
-# ELO Tools
+# EE Admin Scripts
 This is essentially a collection of tools I developed to make admin requirements less tedious.
-These tools aren't as well written as they could be, and could likely be improved.  
+These tools can likely be improved.
 I'll put more effort in to it if more people require these tools, but I'm not committed to any possible updates/feature additions.
 
 This code is published under the GNU Affero General Public License v3.0
