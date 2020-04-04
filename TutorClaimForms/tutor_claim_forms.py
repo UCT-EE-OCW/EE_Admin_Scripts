@@ -11,23 +11,7 @@ from PyPDF2 import PdfFileReader
 from fdfgen import forge_fdf
 from subprocess import Popen, PIPE
 import csv
-
-pdf_fields = {'student_no': None, 'date_of_birth': None, 'email': None, 'first_names': None, 'surname': None,
-          'cell_no': None, 'year': None, 'from': None, 'to': None,
-
-          # A tasks
-          'course_code_a': None, 'convenor_name_A': None, 'ta_name_A': None,
-
-          'day_A': None, 'date_A': None, 'description_A': None, 'time_start_A': None, 'time_stop_A': None, 'duration_A': None,
-          'day_A_1': None, 'date_A_1': None,  'description_A_1': None, 'time_start_A_1': None,  'time_stop_A_1': None, 'duration_A_1': None,
-          # Repeat to 13
-
-          'course_code_b': None, 'convenor_name_B': None, 'ta_name_B': None,
-          'day_B': None, 'date_B': None, 'description_B': None, 'time_start_B': None, 'time_stop_B': None, 'duration_B': None,
-          'day_B_1': None, 'date_B_1': None,  'description_B_1': None, 'time_start_B_1': None,  'time_stop_B_1': None, 'duration_B_1': None,
-          #
-          'sign_date': None,
-          }
+from helpers import Populate_rev2
 
 
 def get_fields(file_in):
@@ -37,34 +21,60 @@ def get_fields(file_in):
     :return:
     """
     file = open(file_in, "rb")
-    pdf_reader = PdfFileReader(file)
+    pdf_reader = PdfFileReader(file, strict=False)
     dictionary = pdf_reader.getFormTextFields()
     print(dictionary)
     file.close()
     return
 
 
-def load_csv(in_file):
-    info = []
+def load_csv_dict(in_file):
     csv_in = open(in_file)
-    reader = csv.DictReader(csv_in)
-    data = list(reader)
-    for row in data:
-        info.append(list(row.items()))
+    info = list(csv.DictReader(csv_in))
     csv_in.close()
     return info
 
 
-def process(tutor_info, course, source_pdf):
-    tutor_info = load_csv(tutor_info)
-    hour_info = load_csv(course)
+def reduce_claim_csv(tutor_info, course_csv):
+    """ Monolithic function due to not being able to have a dictreader without file open"""
+    processed_data = {}
 
-    # For each tutor in info
+    for t in tutor_info:
+        processed_data[t["student_no"]] = []
+
+    f = open(course_csv)
+    reader = csv.DictReader(f)
+
+    for row in reader:
+        for tutor in tutor_info:
+            if row[tutor["student_no"]] != "0":
+                data = [row['Date'], row["Day"], row["Start"], row["End"], row["Task"], row[tutor["student_no"]]]
+                processed_data[tutor["student_no"]].append(data)
+    f.close()
+    # At this point, we have a dict with {studnum: [Activities]}
+    return processed_data
+
+
+def print_pdf(tutor_info, raw_data, pdf_source):
     for tutor in tutor_info:
-        # iterate over all the courses and create the pdf dict
-        print(hour_info)
-        # save the pdf
+        pdf_fields = Populate_rev2(tutor, raw_data[tutor["student_no"]])
+        # fdf = forge_fdf("", pdf_fields, [], [], [])
+        # fn = "{} {} {} {} {} {}.pdf".format(pdf_fields["surname"], pdf_fields["first_names"][0], pdf_fields["convenor_name_A"], pdf_fields["course_code_a"], "month", "year")
+        # pdftk = ["pdftk", pdf_source, "fill_form", "-", "output", fn, "flatten"]
+        # proc = Popen(pdftk, stdin=PIPE)
+        # output = proc.communicate(input=fdf)
+        # if output[1]:
+        #    raise IOError(output[1])
+
+
+def main():
+    get_fields("ClaimFormSource.pdf")
+    # tutor_info = load_csv_dict("Tutors.csv")
+    # raw_data = reduce_claim_csv(tutor_info, "EEE4120F.csv")
+    # print_pdf(tutor_info, raw_data, "ClaimFormSource.pdf")
+
+    # print(raw_data)
 
 
 if __name__ == "__main__":
-    process("Tutors.csv", "EEE4120F.csv", "ClaimFormSource.pdf")
+    main()
