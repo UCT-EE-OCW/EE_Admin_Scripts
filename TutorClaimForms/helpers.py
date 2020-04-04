@@ -1,3 +1,5 @@
+from datetime import datetime
+
 pdf_fields = {'student_no': None, 'date_of_birth': None, 'email': None, 'first_names': None, 'surname': None,
               'cell_no': None, 'year': None, 'from': None, 'to': None, 'PhD': "", 'MSc': "", 'UG': "",
 
@@ -104,5 +106,5 @@ def populate_pdf(tutor, claims):
     filled_dict['total_A'] = sum(float(claims[i][5]) for i in range(len(claims)))
     filled_dict['from'] = claims[0][1]
     filled_dict['to'] = claims[len(claims)-1][1]
-    filled_dict['sign_date'] = "4/4/2020"
+    filled_dict['sign_date'] = datetime.now().strftime("%d/%m/%Y")
     return filled_dict
