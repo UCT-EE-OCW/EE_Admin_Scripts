@@ -4,6 +4,9 @@ Auto populates claim forms based on  a provided CSV
 
 Source PDF provided by Rachmat Harris, converted to PDF by Keegan Crankshaw
 
+TODO:
+    - Cater for multiple courses
+    - Enable threading (perhaps on a per-tutor basis)
 
 """
 
@@ -61,6 +64,7 @@ def print_pdf(tutor_info, raw_data, pdf_source, coursedata):
     month = d.strftime("%b")
     year = d.strftime("%Y")
     for tutor in tutor_info:
+        print("Creating form for {}".format(tutor["student_no"]))
         pdf_fields = populate_pdf(tutor, raw_data[tutor["student_no"]])
         pdf_fields["course_code_A"] = coursedata[0]
         pdf_fields["convenor_name_A"] = coursedata[1]
@@ -73,16 +77,18 @@ def print_pdf(tutor_info, raw_data, pdf_source, coursedata):
         proc = Popen(pdftk, stdin=PIPE)
         output = proc.communicate(input=fdf)
         if output[1]:
-           raise IOError(output[1])
+            raise IOError(output[1])
 
 
 def main():
     # get_fields("ClaimFormSource.pdf")
+    print("=== Creating claim forms ===")
     tutor_info = load_csv_dict("Tutors.csv")
     coursefile = "EEE4120F_Simon Winberg_Keegan Crankshaw.csv"
     raw_data = reduce_claim_csv(tutor_info, coursefile)
     coursedata = coursefile[:-4].split('_')
     print_pdf(tutor_info, raw_data, "ClaimFormSource.pdf", coursedata)
+    print("=== Completed claim forms ===")
 
 
 if __name__ == "__main__":
