@@ -11,7 +11,7 @@ from PyPDF2 import PdfFileReader
 from fdfgen import forge_fdf
 from subprocess import Popen, PIPE
 import csv
-from helpers import Populate_rev2
+from helpers import populate_pdf
 
 
 def get_fields(file_in):
@@ -48,7 +48,7 @@ def reduce_claim_csv(tutor_info, course_csv):
     for row in reader:
         for tutor in tutor_info:
             if row[tutor["student_no"]] != "0":
-                data = [row['Date'], row["Day"], row["Start"], row["End"], row["Task"], row[tutor["student_no"]]]
+                data = [row["Day"], row['Date'], row["Task"], row["Start"], row["End"], row[tutor["student_no"]]]
                 processed_data[tutor["student_no"]].append(data)
     f.close()
     # At this point, we have a dict with {studnum: [Activities]}
@@ -57,21 +57,21 @@ def reduce_claim_csv(tutor_info, course_csv):
 
 def print_pdf(tutor_info, raw_data, pdf_source):
     for tutor in tutor_info:
-        pdf_fields = Populate_rev2(tutor, raw_data[tutor["student_no"]])
-        # fdf = forge_fdf("", pdf_fields, [], [], [])
-        # fn = "{} {} {} {} {} {}.pdf".format(pdf_fields["surname"], pdf_fields["first_names"][0], pdf_fields["convenor_name_A"], pdf_fields["course_code_a"], "month", "year")
-        # pdftk = ["pdftk", pdf_source, "fill_form", "-", "output", fn, "flatten"]
-        # proc = Popen(pdftk, stdin=PIPE)
-        # output = proc.communicate(input=fdf)
-        # if output[1]:
-        #    raise IOError(output[1])
+        pdf_fields = populate_pdf(tutor, raw_data[tutor["student_no"]])
+        fdf = forge_fdf("", pdf_fields, [], [], [])
+        fn = "{} {} {} {} {} {}.pdf".format(pdf_fields["surname"], pdf_fields["first_names"][0], pdf_fields["convenor_name_A"], pdf_fields["course_code_A"], "month", "year")
+        pdftk = ["pdftk", pdf_source, "fill_form", "-", "output", fn, "flatten"]
+        proc = Popen(pdftk, stdin=PIPE)
+        output = proc.communicate(input=fdf)
+        if output[1]:
+           raise IOError(output[1])
 
 
 def main():
-    get_fields("ClaimFormSource.pdf")
-    # tutor_info = load_csv_dict("Tutors.csv")
-    # raw_data = reduce_claim_csv(tutor_info, "EEE4120F.csv")
-    # print_pdf(tutor_info, raw_data, "ClaimFormSource.pdf")
+    # get_fields("ClaimFormSource.pdf")
+    tutor_info = load_csv_dict("Tutors.csv")
+    raw_data = reduce_claim_csv(tutor_info, "EEE4120F.csv")
+    print_pdf(tutor_info, raw_data, "ClaimFormSource.pdf")
 
     # print(raw_data)
 
