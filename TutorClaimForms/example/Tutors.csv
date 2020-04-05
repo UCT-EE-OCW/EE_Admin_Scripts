@@ -1,0 +1,3 @@
+student_no,date_of_birth,email,first_names,surname,cell_no,current_degree,year
+STUDNUM001,21/01/1996,student_a@gmail.com,Student A,First,12345,MSc,1
+STUDNUM002,26/04/1997,student_b@myuct.ac.za,Student B,Second,67890,UG,3

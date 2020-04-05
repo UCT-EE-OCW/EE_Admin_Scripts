@@ -10,3 +10,4 @@ static/
 output/
 *.csv*
 Working Documents/*
+!*/example/*
