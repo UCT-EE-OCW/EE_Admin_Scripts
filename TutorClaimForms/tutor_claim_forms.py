@@ -18,20 +18,6 @@ from helpers import populate_pdf
 from datetime import datetime
 
 
-def get_fields(file_in):
-    """
-    Gets all the editable fields in a PDF and writes it to a .csv
-    :param file_in:
-    :return:
-    """
-    file = open(file_in, "rb")
-    pdf_reader = PdfFileReader(file, strict=False)
-    dictionary = pdf_reader.getFormTextFields()
-    print(dictionary)
-    file.close()
-    return
-
-
 def load_csv_dict(in_file):
     csv_in = open(in_file)
     info = list(csv.DictReader(csv_in))
@@ -63,6 +49,13 @@ def print_pdf(tutor_info, raw_data, pdf_source, coursedata):
     d = datetime.now()
     month = d.strftime("%b")
     year = d.strftime("%Y")
+
+    # Create the summary csv and write the heading
+    filename = "{} {} {} Tutor Spreadhseet - TA {}.csv".format(coursedata[0], month, year, coursedata[2])
+    with open(filename, "w+") as file:
+        file.write("SURNAME, NAME,STUDENT NUMBER,COURSE CODE,TOTAL HOURS CLAIMED - {} {}, Teaching Assistant \n".format(month, year))
+
+    # populate the csv
     for tutor in tutor_info:
         print("Creating form for {}".format(tutor["student_no"]))
         pdf_fields = populate_pdf(tutor, raw_data[tutor["student_no"]])
@@ -79,9 +72,18 @@ def print_pdf(tutor_info, raw_data, pdf_source, coursedata):
         if output[1]:
             raise IOError(output[1])
 
+        # add their details to the summary csv
+        surname = pdf_fields["surname"]
+        name = pdf_fields["first_names"]
+        studnum = tutor["student_no"]
+        course_code = pdf_fields["course_code_A"]
+        total_hours = pdf_fields["total_A"]
+        ta = pdf_fields["ta_name_A"]
+        with open(filename, "a+") as file:
+            file.write("{}, {}, {}, {}, {}, {}\n".format(surname, name, studnum, course_code, total_hours, ta))
+
 
 def main():
-    # get_fields("ClaimFormSource.pdf")
     print("=== Creating claim forms ===")
     tutor_info = load_csv_dict("Tutors.csv")
     coursefile = "EEE4120F_Simon Winberg_Keegan Crankshaw.csv"

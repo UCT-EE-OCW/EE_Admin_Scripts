@@ -108,3 +108,17 @@ def populate_pdf(tutor, claims):
     filled_dict['to'] = claims[len(claims)-1][1]
     filled_dict['sign_date'] = datetime.now().strftime("%d/%m/%Y")
     return filled_dict
+
+
+def get_fields(file_in):
+    """
+    Gets all the editable fields in a PDF and writes it to a .csv
+    :param file_in:
+    :return:
+    """
+    file = open(file_in, "rb")
+    pdf_reader = PdfFileReader(file, strict=False)
+    dictionary = pdf_reader.getFormTextFields()
+    print(dictionary)
+    file.close()
+    return

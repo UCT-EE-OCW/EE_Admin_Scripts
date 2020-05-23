@@ -34,7 +34,7 @@ Columns in Tutors.csv:
 - current_degree: must be one of [UG, MSc, PhD] (Case sensitive)
 - year: how far into the degree the tutor is
  
- ### [coursecode]\_[courseconvenor]\_[teachingassistant].csv
+ ### coursecode_courseconvenor_teachingassistant.csv
  Naturally
  - coursecode: The 8 character alphanumeric course code
  - couseconvenor: The course convenor for the course
