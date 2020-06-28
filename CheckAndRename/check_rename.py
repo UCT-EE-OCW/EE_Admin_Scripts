@@ -139,5 +139,9 @@ def rename_submissions(root_dir):
 
 
 if __name__ == "__main__":
-    rename_submissions("EEE3095S EEE3096S")
-    process_submissions("EEE3095S EEE3096S")
+    entries = os.listdir(".")
+    for entry in entries:
+        if os.path.isdir("." + '/' + entry):
+            print("Now working with {}".format(entry))
+            rename_submissions(entry)
+            process_submissions(entry)
