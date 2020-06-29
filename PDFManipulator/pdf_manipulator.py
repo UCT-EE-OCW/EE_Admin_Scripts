@@ -59,6 +59,7 @@ def reverse_batch(in_dir, out_dir):
 
     #
     count = len(glob.glob1(in_dir, "*.pdf"))
+    print("---Reverse batch---")
     print("Found {} pdf files in directory {}".format(count, in_dir))
 
     for x in sorted(glob.glob('{}/*.pdf'.format(in_dir))):
@@ -101,6 +102,7 @@ def rotate(in_file,  degrees, output_dir):
 
 
 def rotate_batch(input_dir, degrees, output_dir):
+    print("---Rotate batch---")
     count = len(glob.glob1(input_dir, "*.pdf"))
     print("Found {} pdf files in directory {}".format(count, input_dir))
     for x in os.listdir(input_dir):
@@ -194,6 +196,7 @@ def rename_batch(input_dir, title, csv_file, output_dir):
 
     if not count == len(names):
         print("Different number of rows and PDFs")
+        print("There are {} PDFs nad {} rows in the csv".format(count, len(names)))
         return
 
     # Rename the files
@@ -211,6 +214,7 @@ def rename_batch(input_dir, title, csv_file, output_dir):
 def process(in_dir, reverse_pdf, degrees, num_pages, title, csv_file):
     """
     Apply all 4 operations to PDFs in an input directory
+    :param reverse_pdf:
     :param in_dir:
     :param reverse: True or false
     :param title:
@@ -225,14 +229,18 @@ def process(in_dir, reverse_pdf, degrees, num_pages, title, csv_file):
         in_dir = in_dir[:-1] + '_rev/'
 
     # Rotate
-    rotate_batch(in_dir, degrees, in_dir[:-1] + '_rot')
+    if degrees != 0:
+        rotate_batch(in_dir, degrees, in_dir[:-1] + '_rot')
+        in_dir = in_dir[:-1] + '_rot/'
 
     # Split
-    split_batch(in_dir[:-1] + '_rot/', num_pages, in_dir[:-1] + '_rot_splt')
+    split_batch(in_dir, num_pages, in_dir[:-1] + '_splt')
+    in_dir = in_dir[:-1] + '_splt'
 
     # Rename
-    rename_batch(in_dir[:-1] + '_rot_splt/', title, csv_file, in_dir[:-1] + '_processed')
+    rename_batch(in_dir, title, csv_file, in_dir[:-1] + '_processed')
 
-    # Remove temporaries
-    # rmtree(in_dir[:-1] + '_rot')
-    # rmtree(in_dir[:-1] + '_rot_splt')
+
+if __name__ == "__main__":
+    print("Processing")
+    process("Quiz1", "false", 0, 1, "Quiz1", "Quiz1/names.csv")
