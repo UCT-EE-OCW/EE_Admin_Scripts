@@ -50,5 +50,7 @@ if __name__ == "__main__":
     entries = os.listdir(root_dir)
     for entry in entries:
         if entry[-4:] == ".csv":
-            csv_name = root_dir + '/' + entry
-            process(csv_name)
+            if "_processed" not in entry:
+                csv_name = root_dir + '/' + entry
+                print("Working with {}".format(csv_name))
+                process(csv_name)
