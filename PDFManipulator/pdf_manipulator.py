@@ -133,7 +133,7 @@ def split(in_file, pages, output_dir):
         output = PdfFileWriter()
         for j in range(pages):
             output.addPage(inputpdf.getPage((i*pages)+j))
-        file_string = os.getcwd() + '/' + output_dir + '/' + in_file[in_file.index('/') + 1:-4]
+        file_string = os.getcwd() + '/' + output_dir + '/' + os.path.split(in_file)[1][:-4]
         file_string += '_split{:04d}to{:04d}.pdf'.format((i * pages) + 1, (i * pages) + pages)
         with open(file_string, 'wb') as outStream:
             output.write(outStream)
@@ -206,7 +206,7 @@ def rename_batch(input_dir, title, csv_file, output_dir):
             continue
         print(in_pdf)
         print(output_dir + title + str(names[index]) + '.pdf')
-        rename(in_pdf, output_dir + '/' + title + str(names[index]) + '.pdf')
+        rename(in_pdf, output_dir + '/' + title + "_" + str(names[index]) + '.pdf')
 
     return
 
@@ -223,24 +223,34 @@ def process(in_dir, reverse_pdf, degrees, num_pages, title, csv_file):
     :param degrees:
     :return:
     """
-
+    maindir = in_dir
     if reverse_pdf.upper() == "TRUE":
         reverse_batch(in_dir, in_dir[:-1] + '_rev')
+        if maindir != in_dir:
+            rmtree(in_dir)
         in_dir = in_dir[:-1] + '_rev/'
 
     # Rotate
     if degrees != 0:
         rotate_batch(in_dir, degrees, in_dir[:-1] + '_rot')
+        if maindir != in_dir:
+            rmtree(in_dir)
         in_dir = in_dir[:-1] + '_rot/'
 
     # Split
     split_batch(in_dir, num_pages, in_dir[:-1] + '_splt')
+    if maindir != in_dir:
+        rmtree(in_dir)
     in_dir = in_dir[:-1] + '_splt'
 
     # Rename
     rename_batch(in_dir, title, csv_file, in_dir[:-1] + '_processed')
+    if maindir != in_dir:
+        rmtree(in_dir)
+
 
 
 if __name__ == "__main__":
     print("Processing")
-    process("Quiz1", "false", 0, 1, "Quiz1", "Quiz1/names.csv")
+    # process(in_dir, reverse_pdf, degrees, num_pages, title, csv_file)
+    process("Quiz1/", "false", 0, 1, "Quiz1", "Quiz1/names.csv")
