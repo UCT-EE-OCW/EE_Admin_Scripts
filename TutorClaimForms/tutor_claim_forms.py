@@ -10,12 +10,12 @@ TODO:
 
 """
 
-from PyPDF2 import PdfFileReader
 from fdfgen import forge_fdf
 from subprocess import Popen, PIPE
 import csv
 from helpers import populate_pdf
 from datetime import datetime
+import os
 
 
 def load_csv_dict(in_file):
@@ -46,14 +46,17 @@ def reduce_claim_csv(tutor_info, course_csv):
 
 
 def print_pdf(tutor_info, raw_data, pdf_source, coursedata):
+    if not os.path.exists('output'):
+        os.makedirs('output')
+
     d = datetime.now()
     month = d.strftime("%b")
     year = d.strftime("%Y")
 
     # Create the summary csv and write the heading
-    filename = "{} {} {} Tutor Spreadhseet - TA {}.csv".format(coursedata[0], month, year, coursedata[2])
+    filename = "output/{} {} {} Tutor Spreadhseet - TA {}.csv".format(coursedata[0], month, year, coursedata[2])
     with open(filename, "w+") as file:
-        file.write("SURNAME, NAME,STUDENT NUMBER,COURSE CODE,TOTAL HOURS CLAIMED - {} {}, Teaching Assistant \n".format(month, year))
+        file.write("SURNAME,NAME,STUDENT NUMBER,COURSE CODE,TOTAL HOURS CLAIMED-{} {},Teaching Assistant \n".format(month, year))
 
     # populate the csv
     for tutor in tutor_info:
@@ -66,7 +69,7 @@ def print_pdf(tutor_info, raw_data, pdf_source, coursedata):
         fn = "{} {} {} {} {} {}.pdf".format(pdf_fields["surname"], pdf_fields["first_names"][0],
                                             pdf_fields["convenor_name_A"], pdf_fields["course_code_A"],
                                             month, year)
-        pdftk = ["pdftk", pdf_source, "fill_form", "-", "output", fn, "flatten"]
+        pdftk = ["pdftk", pdf_source, "fill_form", "-", "output", "output/{}".format(fn), "flatten"]
         proc = Popen(pdftk, stdin=PIPE)
         output = proc.communicate(input=fdf)
         if output[1]:
@@ -83,15 +86,16 @@ def print_pdf(tutor_info, raw_data, pdf_source, coursedata):
             file.write("{}, {}, {}, {}, {}, {}\n".format(surname, name, studnum, course_code, total_hours, ta))
 
 
-def main():
+def main(coursefiles):
     print("=== Creating claim forms ===")
     tutor_info = load_csv_dict("Tutors.csv")
-    coursefile = "EEE4120F_Simon Winberg_Keegan Crankshaw.csv"
-    raw_data = reduce_claim_csv(tutor_info, coursefile)
-    coursedata = coursefile[:-4].split('_')
-    print_pdf(tutor_info, raw_data, "ClaimFormSource.pdf", coursedata)
+    for file in coursefiles:
+        raw_data = reduce_claim_csv(tutor_info, file)
+        coursedata = file[:-4].split('_')
+        print_pdf(tutor_info, raw_data, "ClaimFormSource.pdf", coursedata)
     print("=== Completed claim forms ===")
 
 
 if __name__ == "__main__":
-    main()
+    coursefiles = ["EEE1111W_CName CSurname_TAName TASurname.csv"]
+    main(coursefiles)
