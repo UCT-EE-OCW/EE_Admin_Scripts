@@ -62,11 +62,10 @@ def process_submissions(root_dir):
                             s[entry] = 'Y'
 
     # write out the file
-    csv_out = open(csv_name[:-4] + "_processed.csv", 'w')
+    csv_out = open(csv_name[:-4] + "_processed.csv", 'w', newline='')
     writer = csv.DictWriter(csv_out, fieldnames=fieldnames)
     writer.writeheader()
-    for s in students:
-        writer.writerow(s)
+    writer.writerows(students)
 
     # Finally, close the file
     csv_out.close()
