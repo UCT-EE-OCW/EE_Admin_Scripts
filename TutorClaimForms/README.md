@@ -53,5 +53,7 @@ Columns in Tutors.csv:
  
 ## Use
 Place the CSV files in the root directory, and run `python tutor_claim_forms` from a CLI.  
-The script will return an output pdf for each tutor, named  
+The script will return an output pdf for each tutor, named appropriately.
+The second last line needs to be changed to the claims form source file (coursecode_courseconvenor_teachingassistant.csv) - see the example.
 "[Tutor Surname] [Tutor Initial] [Course Convenor] [Course Code] Tutor Claim [Month] [Year].pdf"
+
