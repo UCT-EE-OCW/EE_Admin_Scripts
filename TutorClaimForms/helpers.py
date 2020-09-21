@@ -103,9 +103,12 @@ def populate_pdf(tutor, claims):
             filled_dict[key] = fill(claims, int(index), 5)
 
     # Calculated/dynamic
-    filled_dict['total_A'] = sum(float(claims[i][5]) for i in range(len(claims)))
-    filled_dict['from'] = claims[0][1]
-    filled_dict['to'] = claims[len(claims)-1][1]
+    try:
+        filled_dict['total_A'] = sum(float(claims[i][5]) for i in range(len(claims)))
+        filled_dict['from'] = claims[0][1]
+        filled_dict['to'] = claims[len(claims)-1][1]
+    except:
+        print("Tutor {} has no claims this month".format(tutor["student_no"]))
     filled_dict['sign_date'] = datetime.now().strftime("%d/%m/%Y")
     return filled_dict
 

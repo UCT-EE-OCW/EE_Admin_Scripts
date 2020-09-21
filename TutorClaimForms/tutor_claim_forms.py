@@ -37,9 +37,14 @@ def reduce_claim_csv(tutor_info, course_csv):
 
     for row in reader:
         for tutor in tutor_info:
-            if row[tutor["student_no"]] != "0":
-                data = [row["Day"], row['Date'], row["Task"], row["Start"], row["End"], row[tutor["student_no"]]]
-                processed_data[tutor["student_no"]].append(data)
+            try:
+                if int(row[tutor["student_no"]]) > 0:
+                    data = [row["Day"], row['Date'], row["Task"], row["Start"], row["End"], row[tutor["student_no"]]]
+                    processed_data[tutor["student_no"]].append(data)
+            except:
+                # No claim for this tutor
+                pass
+
     f.close()
     # At this point, we have a dict with {studnum: [Activities]}
     return processed_data
