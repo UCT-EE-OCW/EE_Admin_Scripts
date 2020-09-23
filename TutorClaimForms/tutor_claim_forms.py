@@ -38,7 +38,7 @@ def reduce_claim_csv(tutor_info, course_csv):
     for row in reader:
         for tutor in tutor_info:
             try:
-                if int(row[tutor["student_no"]]) > 0:
+                if float(row[tutor["student_no"].replace('.',',')]) > 0:
                     data = [row["Day"], row['Date'], row["Task"], row["Start"], row["End"], row[tutor["student_no"]]]
                     processed_data[tutor["student_no"]].append(data)
             except:
