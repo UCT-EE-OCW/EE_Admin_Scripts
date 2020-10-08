@@ -37,7 +37,7 @@ def process_submissions(root_dir):
     # construct a dict of only student {numbers : student name}
     stud_nums = {}
     for s in students:
-        stud_nums[s["Student ID"].upper()] = s["Student Name"]
+        stud_nums[s["Student ID"].upper()] = "\"" + s["Student Name"] + "\""
 
     fieldnames = [] + reader.fieldnames
 
@@ -128,8 +128,12 @@ def rename_submissions(root_dir):
                         s_new += " [{}]".format(i)
                         print("Could not find student number {}".format(i))
                 s_new += fileformat
-
-                os.rename(root_dir + '/' + entry + '/' + item, root_dir + '/' + entry + '/' + s_new)
+                try:
+                    os.rename(root_dir + '/' + entry + '/' + item, root_dir + '/' + entry + '/' + s_new)
+                except FileExistsError:
+                    s_new = s_new.replace(fileformat, " DUPLICATE") + fileformat
+                    os.rename(root_dir + '/' + entry + '/' + item, root_dir + '/' + entry + '/' + s_new)
+                    print("Duplciate entry for {}".format(studnums_found))
 
     # Finally, close the file
     csv_in.close()
